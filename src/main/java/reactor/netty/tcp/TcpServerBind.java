@@ -55,6 +55,7 @@ final class TcpServerBind extends TcpServer {
 		BootstrapHandlers.channelOperationFactory(this.serverBootstrap, TcpUtils.TCP_OPS);
 	}
 
+	//Core function for build connection
 	@Override
 	public Mono<? extends DisposableServer> bind(ServerBootstrap b) {
 		SslProvider ssl = SslProvider.findSslSupport(b);
@@ -80,6 +81,7 @@ final class TcpServerBind extends TcpServer {
 
 			convertLazyLocalAddress(bootstrap);
 
+			//bind handler
 			BootstrapHandlers.finalizeHandler(bootstrap, ops, new ChildObserver(childObs));
 
 			ChannelFuture f = bootstrap.bind();
@@ -121,6 +123,7 @@ final class TcpServerBind extends TcpServer {
 		}
 	}
 
+	//bind() to create ServerBootstrap and bind address and port
 	ServerBootstrap createServerBootstrap() {
 		return new ServerBootstrap()
 				.option(ChannelOption.SO_REUSEADDR, true)
@@ -186,6 +189,7 @@ final class TcpServerBind extends TcpServer {
 				if (log.isDebugEnabled()) {
 					log.debug(format(f.channel(), "Bound new server"));
 				}
+				// notify the connection built
 				sink.success(this);
 				selectorObserver.onStateChange(this, ConnectionObserver.State.CONNECTED);
 			}

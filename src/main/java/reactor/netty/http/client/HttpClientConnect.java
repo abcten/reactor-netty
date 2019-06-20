@@ -325,6 +325,7 @@ final class HttpClientConnect extends HttpClient {
 						        .then(BootstrapHandlers.connectionObserver(finalBootstrap))
 						        .then(new HttpIOHandlerObserver(sink, handler)));
 
+				// Call tcp client finally
 				tcpClient.connect(finalBootstrap)
 				         .subscribe(new TcpClientSubscriber(sink));
 

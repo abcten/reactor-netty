@@ -124,6 +124,7 @@ public abstract class BootstrapHandlers {
 			}
 		}
 
+		//replace initializer to new one ChannelOperationsHandler
 		b.handler(new BootstrapInitializerHandler(pipeline, opsFactory, listener));
 	}
 
@@ -398,6 +399,7 @@ public abstract class BootstrapHandlers {
 		else {
 			BootstrapPipelineHandler p = new BootstrapPipelineHandler(Collections.emptyList());
 
+			// to add handler to pipeline
 			if (handler != null) {
 				p.add(new PipelineConfiguration((ctx, ch) -> ch.pipeline()
 				                                               .addFirst(handler),
@@ -455,6 +457,7 @@ public abstract class BootstrapHandlers {
 				}
 			}
 
+			//Replace the handler
 			ChannelOperations.addReactiveBridge(ch, opsFactory, listener);
 
 			if (log.isDebugEnabled()) {
@@ -514,6 +517,8 @@ public abstract class BootstrapHandlers {
 		}
 	}
 
+
+	// Real add handler to pipeline here
 	static final class BootstrapPipelineHandler extends ArrayList<PipelineConfiguration>
 			implements ChannelHandler {
 

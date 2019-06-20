@@ -76,6 +76,7 @@ final class HttpServerBind extends HttpServer
 
 	final TcpServer tcpServer;
 
+	// to use create TcpServerBind instance and assign to tcpServer
 	HttpServerBind() {
 		this(DEFAULT_TCP_SERVER);
 	}
@@ -92,6 +93,10 @@ final class HttpServerBind extends HttpServer
 	@Override
 	@SuppressWarnings("unchecked")
 	public Mono<? extends DisposableServer> bind(TcpServer delegate) {
+
+		// this is a Function<ServerBootstrap, ServerBootstrap> implementation
+		// HttpServerBind has apply(ServerBootstrap b) function as bootstrap input parameter
+		// to customize ServerBootstrap construction
 		return delegate.bootstrap(this)
 		               .bind()
 		               .map(CLEANUP_GLOBAL_RESOURCE);
@@ -122,9 +127,11 @@ final class HttpServerBind extends HttpServer
 			boolean useNative =
 					LoopResources.DEFAULT_NATIVE || (ssl != null && !(ssl.getSslContext() instanceof JdkSslContext));
 
+			// here to get resources and to get EventLoopGroups
 			EventLoopGroup selector = loops.onServerSelect(useNative);
 			EventLoopGroup elg = loops.onServer(useNative);
 
+			//to create ServerBootstrap instance and set two event loop groups, also set channel
 			b.group(selector, elg)
 			 .channel(loops.onServerChannel(elg));
 		}
@@ -132,6 +139,8 @@ final class HttpServerBind extends HttpServer
 		//remove any OPS since we will initialize below
 		BootstrapHandlers.channelOperationFactory(b);
 
+		// construct initializer to add handlers to channel
+		// According to different protocols to configure different handlers
 		if (ssl != null) {
 			if ((conf.protocols & HttpServerConfiguration.h2c) == HttpServerConfiguration.h2c) {
 				throw new IllegalArgumentException("Configured H2 Clear-Text protocol " +
@@ -346,6 +355,8 @@ final class HttpServerBind extends HttpServer
 		public void accept(ConnectionObserver listener, Channel channel) {
 			ChannelPipeline p = channel.pipeline();
 
+			// new HttpServerCodec and add it to channel pipeline
+			// Netty would create handler context, bind with handler and put context to pipeline
 			p.addLast(NettyPipeline.HttpCodec, new HttpServerCodec(line, header, chunk, validate, buffer));
 
 			if (ACCESS_LOG) {

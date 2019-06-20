@@ -222,6 +222,7 @@ public class TcpResources implements ConnectionProvider, LoopResources {
 		for (; ; ) {
 			T resources = ref.get();
 			if (resources == null || loops != null || provider != null) {
+				// to get TCP resources
 				update = create(resources, loops, provider, name, onNew);
 				if (ref.compareAndSet(resources, update)) {
 					if(resources != null) {
@@ -268,15 +269,20 @@ public class TcpResources implements ConnectionProvider, LoopResources {
 
 	static {
 		ON_TCP_NEW = TcpResources::new;
+
+		// to keep tcp resource in tcpResources
 		tcpResources  = new AtomicReference<>();
 	}
 
+	// to get event loops and provider
 	static <T extends TcpResources> T create(@Nullable T previous,
 			@Nullable LoopResources loops, @Nullable ConnectionProvider provider,
 			String name,
 			BiFunction<LoopResources, ConnectionProvider, T> onNew) {
 		if (previous == null) {
 			loops = loops == null ? LoopResources.create("reactor-" + name) : loops;
+
+			// new PooledConnectionProvider
 			provider = provider == null ? ConnectionProvider.elastic(name) : provider;
 		}
 		else {

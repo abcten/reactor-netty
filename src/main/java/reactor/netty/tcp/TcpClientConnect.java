@@ -63,6 +63,8 @@ final class TcpClientConnect extends TcpClient {
 					maxConnections != -1);
 		}
 
+		// b final bootstrap, and acquire a connection
+		// provider is a PooledConnectionProvider
 		return provider.acquire(b);
 
 	}

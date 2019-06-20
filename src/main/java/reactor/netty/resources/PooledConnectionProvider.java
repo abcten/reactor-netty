@@ -297,25 +297,25 @@ final class PooledConnectionProvider implements ConnectionProvider {
 				it actually fails to connect and the FixedChannelPool will decrement its
 				active count, same as if it was released. The channel close promise is
 				still invoked, which can lead to double-decrement and an assertion error.
-
 				As such, it is best to only register the close handler on the channel in
 				`PooledClientContextHandler`.
-
 				see https://github.com/reactor/reactor-netty/issues/289
 			 */
-
 			inactiveConnections.incrementAndGet();
 			if (log.isDebugEnabled()) {
 				log.debug(format(ch, "Created new pooled channel, now {} active connections and {} inactive connections"),
 						activeConnections, inactiveConnections);
 			}
-
+			// wrap channel and pool, enhance the channel
 			PooledConnection pooledConnection = new PooledConnection(ch, this);
 
+			//set status to bind
 			pooledConnection.bind();
 
 			Bootstrap bootstrap = this.bootstrap.clone();
 
+			// configure ChannelOperationsHandler to bootstrap
+			// key logic to register ChannelOperationsHandler to channel
 			BootstrapHandlers.finalizeHandler(bootstrap, opsFactory, pooledConnection);
 
 			ch.pipeline()
@@ -332,6 +332,7 @@ final class PooledConnectionProvider implements ConnectionProvider {
 		}
 	}
 
+	// Implementation ConnectionObserver for connection and status change
 	final static class PendingConnectionObserver implements ConnectionObserver {
 
 		final Queue<Pending> pendingQueue = Queues.<Pending>unbounded(4).get();
@@ -341,11 +342,14 @@ final class PooledConnectionProvider implements ConnectionProvider {
 			pendingQueue.add(new Pending(connection, error, null));
 		}
 
+		// a pending queue for connection and status, to get channel current status
+		// manage the status change
 		@Override
 		public void onStateChange(Connection connection, State newState) {
 			pendingQueue.add(new Pending(connection, null, newState));
 		}
 
+		// build relation between connection and status
 		static class Pending {
 			final Connection connection;
 			final Throwable error;
@@ -374,6 +378,7 @@ final class PooledConnectionProvider implements ConnectionProvider {
 		ConnectionObserver owner() {
 			ConnectionObserver obs;
 
+			// set ConnectionObserver to channel
 			for (;;) {
 				obs = channel.attr(OWNER)
 				             .get();

@@ -69,6 +69,8 @@ public class ChannelOperations<INBOUND extends NettyInbound, OUTBOUND extends Ne
 	 * @param listener the listener to forward connection events to
 	 */
 	public static void addReactiveBridge(Channel ch, OnSetup opsFactory, ConnectionObserver listener) {
+
+		//channel, ChannelOperationsHandler and ChannelOperations
 		ch.pipeline()
 		  .addLast(NettyPipeline.ReactiveBridge, new ChannelOperationsHandler(opsFactory, listener));
 	}
@@ -208,6 +210,7 @@ public class ChannelOperations<INBOUND extends NettyInbound, OUTBOUND extends Ne
 
 	@Override
 	public final void onNext(Void aVoid) {
+		// nothing need to handle in case of void
 	}
 
 	@Override

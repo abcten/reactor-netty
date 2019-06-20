@@ -157,17 +157,24 @@ final class DefaultLoopResources extends AtomicLong implements LoopResources {
 		return eventLoopGroup;
 	}
 
+
 	@Override
 	public EventLoopGroup onServer(boolean useNative) {
+
+		//Get an event loop according to system operation if need to use local native server
 		if (useNative && preferNative()) {
 			return cacheNativeServerLoops();
 		}
+
+		// Get NIO server loops
 		return cacheNioServerLoops();
 	}
 
 	EventLoopGroup cacheNioServerLoops() {
 		EventLoopGroup eventLoopGroup = serverLoops.get();
 		if (null == eventLoopGroup) {
+
+			//Default 4 worker threads
 			EventLoopGroup newEventLoopGroup = new NioEventLoopGroup(workerCount,
 					threadFactory(this, "nio"));
 			if (!serverLoops.compareAndSet(null, newEventLoopGroup)) {

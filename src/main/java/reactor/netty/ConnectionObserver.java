@@ -69,6 +69,8 @@ public interface ConnectionObserver {
 	 * @param connection the connection reference
 	 * @param newState the new State
 	 */
+	//Status management for channel which as connection between server and client
+	// onStateChange as key bridge method
 	void onStateChange(Connection connection, State newState);
 
 	/**

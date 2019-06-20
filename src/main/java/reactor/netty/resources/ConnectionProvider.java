@@ -78,6 +78,8 @@ public interface ConnectionProvider extends Disposable {
 	 * {@link Connection}
 	 */
 	static ConnectionProvider elastic(String name) {
+
+		// new PooledConnectionProvider
 		return new PooledConnectionProvider(name,
 				(bootstrap, handler, checker) -> new SimpleChannelPool(bootstrap,
 						handler,

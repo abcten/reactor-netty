@@ -60,6 +60,10 @@ final class HttpServerHandle extends HttpServerOperator implements ConnectionObs
 					log.debug(format(connection.channel(), "Handler is being applied: {}"), handler);
 				}
 				HttpServerOperations ops = (HttpServerOperations) connection;
+
+				// ops : responsible for http request, HttpServerRequest
+				// ops : responsible for http response, HttpServerResponse
+				// ops : responsible for CoreSubscriber
 				Mono.fromDirect(handler.apply(ops, ops))
 				    .subscribe(ops.disposeSubscriber());
 			}

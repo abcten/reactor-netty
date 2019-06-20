@@ -41,6 +41,7 @@ final class DefaultLoopEpoll implements DefaultLoop {
 
 	private static final boolean epoll;
 
+	//Using the native transports
 	static {
 		boolean epollCheck = false;
 		try{
@@ -59,6 +60,7 @@ final class DefaultLoopEpoll implements DefaultLoop {
 		return epoll;
 	}
 
+	// new a event loop group
 	@Override
 	public EventLoopGroup newEventLoopGroup(int threads, ThreadFactory factory) {
 		return new EpollEventLoopGroup(threads, factory);

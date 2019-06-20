@@ -80,6 +80,7 @@ final class ChannelOperationsHandler extends ChannelInboundHandlerAdapter {
 		}
 	}
 
+	// Handle channel message
 	@Override
 	final public void channelRead(ChannelHandlerContext ctx, Object msg) {
 		if (msg == null || msg == Unpooled.EMPTY_BUFFER || msg instanceof EmptyByteBuf) {

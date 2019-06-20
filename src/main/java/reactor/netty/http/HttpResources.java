@@ -104,6 +104,7 @@ public final class HttpResources extends TcpResources {
 	static final AtomicReference<HttpResources>                          httpResources;
 	static final BiFunction<LoopResources, ConnectionProvider, HttpResources> ON_HTTP_NEW;
 
+	// same as tcp http source, HttpResources extends from TcpResources
 	static {
 		ON_HTTP_NEW = HttpResources::new;
 		httpResources = new AtomicReference<>();

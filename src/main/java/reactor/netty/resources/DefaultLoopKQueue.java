@@ -41,6 +41,7 @@ final class DefaultLoopKQueue implements DefaultLoop {
 
 	private static final boolean kqueue;
 
+	//Using the MacOS/BSD native transport
 	static {
 		boolean kqueueCheck = false;
 		try{

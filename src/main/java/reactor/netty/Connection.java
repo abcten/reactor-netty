@@ -29,6 +29,7 @@ import reactor.core.publisher.Mono;
  * @since 0.8
  */
 @FunctionalInterface
+// wrapper of Channel
 public interface Connection extends DisposableChannel {
 
 	/**
